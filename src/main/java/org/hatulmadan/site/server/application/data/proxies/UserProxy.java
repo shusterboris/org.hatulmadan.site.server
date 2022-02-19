@@ -1,4 +1,4 @@
-package org.hatulmadan.site.server.application.data.entities.proxies;
+package org.hatulmadan.site.server.application.data.proxies;
 
 import lombok.Getter;
 import lombok.Setter;

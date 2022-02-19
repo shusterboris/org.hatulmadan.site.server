@@ -1,6 +1,6 @@
 package org.hatulmadan.site.server.application.services;
 
-import org.hatulmadan.site.server.application.data.entities.proxies.UserProxy;
+import org.hatulmadan.site.server.application.data.proxies.UserProxy;
 import org.hatulmadan.site.server.application.data.entities.security.Authority;
 import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.data.repositories.AuthorityDAO;
