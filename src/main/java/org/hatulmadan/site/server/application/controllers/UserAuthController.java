@@ -8,6 +8,7 @@ import org.hatulmadan.site.server.application.data.entities.security.JwtResponse
 import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,6 +46,34 @@ public class UserAuthController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
+
+    @PostMapping(value = "/changepassword", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> changePassword(@RequestBody JwtRequest authenticationRequest) throws Exception {
+
+        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+
+        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        String result = jwtUserDetailsService.changePassword((User) userDetails, authenticationRequest.getNewPassword());
+        if (!"".equals(result))
+            throw new Exception("ANOTHER_REASON");
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> registerNewUser(@RequestBody JwtRequest authenticationRequest) throws Exception {
+        User user = new User();
+        user.setUsername(authenticationRequest.getUsername());
+        user.setPassword(authenticationRequest.getPassword());
+        try {
+            jwtUserDetailsService.saveUser(user);
+            final String token = jwtTokenUtil.generateToken(user);
+            return ResponseEntity.ok(new JwtResponse(token));
+        }catch (Exception e){
+            return new ResponseEntity<String>("",HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+
 
     private void authenticate(String username, String password) throws Exception {
         Objects.requireNonNull(username);
