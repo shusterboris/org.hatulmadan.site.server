@@ -46,20 +46,7 @@ public class UserAuthController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
-
-    @PostMapping(value = "/changepassword", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> changePassword(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
-        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        String result = jwtUserDetailsService.changePassword((User) userDetails, authenticationRequest.getNewPassword());
-        if (!"".equals(result))
-            throw new Exception("ANOTHER_REASON");
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
-    }
-
+    
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> registerNewUser(@RequestBody JwtRequest authenticationRequest) throws Exception {
         User user = new User();
