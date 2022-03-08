@@ -59,7 +59,7 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable().cors().configurationSource(corsConfigurationSource()).and().authorizeRequests()
-                .antMatchers("/auth", "/register", "/files/**", "/survey/**")
+                .antMatchers("/auth", "/register", "/files/**")
                 .permitAll()
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()
@@ -80,7 +80,7 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000", "http://localhost","http://127.0.0.1:8090", "https://127.0.0.1:8090"));
+                "http://localhost:3000", "http://localhost","http://127.0.0.1:8080", "https://q.hatulmadan.net" , "https://hatulmadan.net"));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);

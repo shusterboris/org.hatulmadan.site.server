@@ -8,10 +8,12 @@ import org.hatulmadan.site.server.application.data.entities.security.JwtResponse
 import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,11 +53,15 @@ public class UserAuthController {
     public ResponseEntity<?> registerNewUser(@RequestBody JwtRequest authenticationRequest) throws Exception {
         User user = new User();
         user.setUsername(authenticationRequest.getUsername());
-        user.setPassword(authenticationRequest.getPassword());
+        user.setPassword(authenticationRequest.getNewPassword());
         try {
             jwtUserDetailsService.saveUser(user);
             final String token = jwtTokenUtil.generateToken(user);
             return ResponseEntity.ok(new JwtResponse(token));
+        }catch (CannotCreateTransactionException ccte){
+            return new ResponseEntity<String>("Невозможно сохранить запись в базе данных. Попробуйте попозже или свяжитесь с технической поддержкой",HttpStatus.UNPROCESSABLE_ENTITY);
+        }catch (DataIntegrityViolationException die){
+            return new ResponseEntity<String>("Такой пользователь уже существует, выберите другое имя",HttpStatus.UNPROCESSABLE_ENTITY);
         }catch (Exception e){
             return new ResponseEntity<String>("",HttpStatus.UNPROCESSABLE_ENTITY);
         }
