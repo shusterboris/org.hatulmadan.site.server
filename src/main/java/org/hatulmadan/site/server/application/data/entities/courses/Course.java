@@ -9,6 +9,6 @@ import org.hatulmadan.site.server.application.data.entities.BasicEntity;
 @Getter
 @Setter
 
-public class CourseName extends BasicEntity {
+public class Course extends BasicEntity {
 	private String name;
 }

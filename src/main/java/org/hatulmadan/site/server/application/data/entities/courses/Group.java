@@ -14,8 +14,8 @@ import org.hatulmadan.site.server.application.data.entities.BasicEntity;
 @Setter
 @Table(name = "GROUP")
 public class Group extends BasicEntity {
-@Column(name = "NAME")
-private String name;
-private String schedule;
-private long courseName;
+    @Column(name = "NAME")
+    private String name;
+    private String schedule;
+    private long courseName;
 }

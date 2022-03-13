@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 public class Lesson extends BasicEntity {
-	 private ZonedDateTime start;
-	 private Long group;
-	 private int number;
+	private ZonedDateTime start;
+	private Long group;
+	private int number;
 }

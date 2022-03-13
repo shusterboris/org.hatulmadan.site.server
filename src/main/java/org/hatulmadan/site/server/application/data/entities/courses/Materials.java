@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Getter
 @Setter
-public class materials extends BasicEntity {
+public class Materials extends BasicEntity {
 private String comment;
 private Long lesson;
 private String youtubeLink;

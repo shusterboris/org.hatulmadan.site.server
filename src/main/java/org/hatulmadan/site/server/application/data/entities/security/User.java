@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "USERS", uniqueConstraints = {@UniqueConstraint(columnNames = {"USERNAME"})})
@@ -109,19 +110,19 @@ public class User implements UserDetails, Serializable {
         this.authorities = authorities;
     }
     
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "USERS_GROUP",
-            joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID"))
-   
-    private Collection<Group> groupes = new ArrayList<Group>();
 
-	public Collection<Group> getGroupes() {
-		return groupes;
+    @JoinTable(name = "USERS_GROUP",
+            joinColumns = @JoinColumn(name = "USER_GID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID"))
+    @ElementCollection(targetClass=Group.class)
+    private List<Group> groups = new ArrayList<Group>();
+
+	public List<Group> getGroups() {
+		return groups;
 	}
 
-	public void setGroupes(Collection<Group> groupes) {
-		this.groupes = groupes;
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
 	}
 
 }
