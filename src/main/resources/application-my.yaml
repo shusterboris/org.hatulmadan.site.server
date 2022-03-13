@@ -1,0 +1,28 @@
+spring:
+  main:
+    allow-circular-references: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/hatul?useSSL=false&default_authentication_plugin=mysql_native_password&useUnicode=yes&characterEncoding=UTF-8&serverTimezone=Asia/Jerusalem
+    username: chserver
+    password: vfnthy0tckjdJ
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+      check_nullability: true
+  jwt.get.token.uri: /auth
+  secret: $2y$04$mygZYT6qZ72/FSXpcvZ6tuzkJ1rF5Sd4rNtxJ13QT965CC24o6jYO
+logging:
+  file: /var/log/hmslog.log
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: INFO
+
+server:
+  port: 8080

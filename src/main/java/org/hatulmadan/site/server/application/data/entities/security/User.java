@@ -1,6 +1,8 @@
 package org.hatulmadan.site.server.application.data.entities.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.hatulmadan.site.server.application.data.entities.courses.Group;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -106,5 +108,20 @@ public class User implements UserDetails, Serializable {
     public void setAuthorities(Collection<Authority> authorities) {
         this.authorities = authorities;
     }
+    
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "USERS_GROUP",
+            joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID"))
+   
+    private Collection<Group> groupes = new ArrayList<Group>();
+
+	public Collection<Group> getGroupes() {
+		return groupes;
+	}
+
+	public void setGroupes(Collection<Group> groupes) {
+		this.groupes = groupes;
+	}
 
 }
