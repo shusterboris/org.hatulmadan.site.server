@@ -12,9 +12,9 @@ import org.hatulmadan.site.server.application.data.entities.BasicEntity;
 @Entity
 @Getter
 @Setter
-@Table(name = "GROUP")
+@Table(name = "usergroups")
 public class Group extends BasicEntity {
-    @Column(name = "NAME")
+    @Column(name = "groupName")
     private String name;
     private String schedule;
     private long courseName;

@@ -18,7 +18,7 @@ public class Lesson extends BasicEntity {
 	@Column
 	private ZonedDateTime start;
 	@Column
-	private Long group;
+	private Long groupId;
 	@Column
 	private String comment;
 }
