@@ -44,7 +44,6 @@ public class User implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID"))
     @OrderBy
-    @JsonIgnore
     private Collection<Authority> authorities = new ArrayList<Authority>();
 
     @Override

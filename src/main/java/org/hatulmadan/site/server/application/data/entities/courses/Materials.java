@@ -12,8 +12,9 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 public class Materials extends BasicEntity {
-private String comment;
-private Long lesson;
-private String youtubeLink;
-private String fileLink;
+    private String comment;
+    private Long lesson;
+    private String youtubeLink;
+    private String fileLink;
+    private String srvFileLink;
 }
