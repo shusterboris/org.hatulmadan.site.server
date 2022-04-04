@@ -7,6 +7,7 @@ import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
 import org.hatulmadan.site.server.application.data.entities.courses.Materials;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,6 +18,7 @@ public class LessonProxy {
     ZonedDateTime start;
     Group group;
     List<Materials> materials;
+    Long sortOrder = 0L;
 
     public Lesson updateEntity(){
         Lesson l =  new Lesson();
@@ -24,6 +26,8 @@ public class LessonProxy {
         l.setGroupId(group.getId());
         l.setStart(this.getStart());
         l.setComment(comment);
+        l.setSortOrder(sortOrder);
+        l.setGroupName(group.getName());
         return l;
     }
 
@@ -39,6 +43,11 @@ public class LessonProxy {
         this.start = start;
         this.group = group;
         this.materials = materials;
+    }
+
+    public LessonProxy(Lesson lesson) {
+        this(lesson.getId(), lesson.getComment(), lesson.getStart(), null, new ArrayList<Materials>());
+        setSortOrder(lesson.getSortOrder());
     }
 
     public LessonProxy(){
