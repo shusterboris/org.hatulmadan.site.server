@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface LessonsDAO extends CrudRepository<Lesson, Long> {
     List<Lesson> findAll();
+    List<Lesson> findByIsDeletedFalse();
+    List<Lesson> findByGroupIdAndIsDeletedFalseOrderByStart(Long groupId);
 }

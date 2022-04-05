@@ -6,6 +6,9 @@ import org.hatulmadan.site.server.application.config.JwtTokenUtil;
 import org.hatulmadan.site.server.application.data.entities.security.JwtRequest;
 import org.hatulmadan.site.server.application.data.entities.security.JwtResponse;
 import org.hatulmadan.site.server.application.data.entities.security.User;
+import org.hatulmadan.site.server.application.data.repositories.AuthorityDAO;
+import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
+import org.hatulmadan.site.server.application.data.repositories.UserDAO;
 import org.hatulmadan.site.server.application.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,6 +36,14 @@ public class UserAuthController {
     @Autowired
     private UserDetailsServiceImpl jwtUserDetailsService;
 
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
+    private AuthorityDAO authDAO;
+
+    private GroupsDAO grpDAO;
+
     @PostMapping(value = "/auth", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
@@ -46,7 +57,10 @@ public class UserAuthController {
         }
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        User user = (User) userDetails;
+        user.setPassword(null);
+
+        return ResponseEntity.ok(new JwtResponse(token, user));
     }
     
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")

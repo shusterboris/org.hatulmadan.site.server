@@ -1,24 +1,47 @@
 package org.hatulmadan.site.server.application.services;
 
+import org.hatulmadan.site.server.application.data.entities.courses.Group;
 import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
 import org.hatulmadan.site.server.application.data.entities.courses.Materials;
 import org.hatulmadan.site.server.application.data.proxies.LessonProxy;
+import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
 import org.hatulmadan.site.server.application.data.repositories.LessonsDAO;
 import org.hatulmadan.site.server.application.data.repositories.MaterialsDAO;
-import org.hatulmadan.site.server.application.utils.DAOErrorProcess;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class LessonsService {
     @Autowired
     LessonsDAO dao;
+
     @Autowired
     MaterialsDAO mDAO;
 
-    public LessonsDAO getDao() {
-        return dao;
+    @Autowired
+    GroupsDAO groupsDAO;
+
+    public List<LessonProxy> findLessonsData(Long groupId){
+        HashSet<Group> groupList = groupsDAO.findByIsDeletedFalse();
+        List<LessonProxy> result = new ArrayList<>();
+        List<Lesson> lessons;
+        if (groupId == null)
+            lessons = dao.findByIsDeletedFalse();
+        else
+            lessons = dao.findByGroupIdAndIsDeletedFalseOrderByStart(groupId);
+        for (Lesson lesson : lessons){
+            LessonProxy proxy = new LessonProxy(lesson);
+            Optional<Group> curGroup = groupList.stream().filter(group -> group.getId().equals(lesson.getGroupId())).findFirst();
+            proxy.setGroup(curGroup.orElse(null));
+            List<Materials> materials = mDAO.findByLesson(lesson.getId());
+            proxy.setMaterials(materials);
+            result.add(proxy);
+        }
+        return result;
     }
 
     private void saveMaterials(Materials m, Long lessonId){
@@ -34,4 +57,11 @@ public class LessonsService {
                 .forEach((Materials m) ->saveMaterials(m, result.getId()));
         return result.getId();
     }
+
+    public LessonsDAO getDao() {
+        return dao;
+    }
+
+    public MaterialsDAO getmDAO() {return mDAO; }
+
 }

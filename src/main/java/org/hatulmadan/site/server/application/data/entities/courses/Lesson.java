@@ -21,4 +21,6 @@ public class Lesson extends BasicEntity {
 	private Long groupId;
 	@Column
 	private String comment;
+	@Column(length = 80)
+	private String groupName;
 }

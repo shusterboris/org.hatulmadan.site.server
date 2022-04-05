@@ -44,7 +44,6 @@ public class User implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID"))
     @OrderBy
-    @JsonIgnore
     private Collection<Authority> authorities = new ArrayList<Authority>();
 
     @Override
@@ -112,6 +111,7 @@ public class User implements UserDetails, Serializable {
     
 
     @JoinTable(name = "USERS_GROUP",
+            uniqueConstraints = { @UniqueConstraint(name = "UniqueNumberAndStatus", columnNames = { "USER_GID", "GROUP_ID" }) },
             joinColumns = @JoinColumn(name = "USER_GID", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID"))
     @ElementCollection(targetClass=Group.class)
