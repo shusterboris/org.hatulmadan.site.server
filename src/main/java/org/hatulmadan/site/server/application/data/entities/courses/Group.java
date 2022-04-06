@@ -17,5 +17,6 @@ public class Group extends BasicEntity {
     @Column(name = "groupName")
     private String name;
     private String schedule;
-    private long courseName;
+    private long course;
+    private String courseName;
 }
