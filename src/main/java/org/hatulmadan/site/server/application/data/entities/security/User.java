@@ -2,6 +2,8 @@ package org.hatulmadan.site.server.application.data.entities.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hatulmadan.site.server.application.data.entities.courses.Group;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -110,10 +112,11 @@ public class User implements UserDetails, Serializable {
     }
     
 
-    @JoinTable(name = "USERS_GROUP",
-            uniqueConstraints = { @UniqueConstraint(name = "UniqueNumberAndStatus", columnNames = { "USER_GID", "GROUP_ID" }) },
-            joinColumns = @JoinColumn(name = "USER_GID", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID"))
+
+    @OneToMany
+    @JoinTable(name = "USER_GROUP_LINK",
+            joinColumns = @JoinColumn(name = "USER_GID", referencedColumnName = "ID",  foreignKey = @ForeignKey(name = "bothIds")),
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "bothIds")))
     @ElementCollection(targetClass=Group.class)
     private List<Group> groups = new ArrayList<Group>();
 
