@@ -2,8 +2,10 @@ package org.hatulmadan.site.server.application.controllers;
 
 import org.hatulmadan.site.server.application.data.entities.courses.Course;
 import org.hatulmadan.site.server.application.data.entities.courses.Group;
+import org.hatulmadan.site.server.application.data.proxies.GroupProxy;
 import org.hatulmadan.site.server.application.data.repositories.CoursesDAO;
 import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
+import org.hatulmadan.site.server.application.services.LogService;
 import org.hatulmadan.site.server.application.utils.DAOErrorProcess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,13 +23,32 @@ public class DictController {
     @Autowired
     CoursesDAO coursesDAO;
 
+    @Autowired
+    LogService logSrv;
+
     @GetMapping(value = "/dictionary/group/getAll")
     public ResponseEntity<Object> fetchGroupsAll(){
         try {
             List<Group> result = groupsDAO.findAll();
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e){
-            logError(e);
+            logSrv.logError(e);
+            String errMsg = DAOErrorProcess.getErrorMessage(e);
+            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/dictionary/group/getById/{id}")
+    public ResponseEntity<Object> fetchGroupsById(@PathVariable Long id){
+        try {
+            Optional<Group> result = groupsDAO.findById(id);
+            if (result.isPresent()) {
+                GroupProxy proxy = new GroupProxy(result.get());
+                return new ResponseEntity<>(proxy, HttpStatus.OK);
+            }else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            logSrv.logError(e);
             String errMsg = DAOErrorProcess.getErrorMessage(e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -48,7 +69,7 @@ public class DictController {
                 groupsDAO.save(group);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
-            logError(e);
+            logSrv.logError(e);
             String errMsg = DAOErrorProcess.getErrorMessage(e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -63,7 +84,7 @@ public class DictController {
             List<Course> result = coursesDAO.findByIsDeletedFalseOrderBySortOrder();
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e){
-            logError(e);
+            logSrv.logError(e);
             String errMsg = DAOErrorProcess.getErrorMessage(e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -78,7 +99,7 @@ public class DictController {
             coursesDAO.delete(courseOpt.get());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            logError(e);
+            logSrv.logError(e);
             String errMsg = DAOErrorProcess.getErrorMessage(e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -100,13 +121,9 @@ public class DictController {
                 coursesDAO.save(course);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
-            logError(e);
+            logSrv.logError(e);
             String errMsg = DAOErrorProcess.getErrorMessage(e);
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void logError(Exception e){
-        e.printStackTrace();
     }
 }

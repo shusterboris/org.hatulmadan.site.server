@@ -2,34 +2,38 @@ package org.hatulmadan.site.server.application.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.hatulmadan.site.server.application.data.entities.security.User;
+import org.hatulmadan.site.server.application.data.repositories.UserDAO;
+import org.hatulmadan.site.server.application.services.LogService;
+import org.hatulmadan.site.server.application.utils.DAOErrorProcess;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Getter
 @Setter
 public class UserController {
-    @GetMapping(value = "user/getByName/{username}")
-    public ResponseEntity<Object> getByName(@PathVariable("username") String  username, Authentication authentication){
-        List<String> fakeUsernames = Arrays.asList("aron","tanya","vasya");
-        User user;
-        Optional<String> found = fakeUsernames.stream().filter(current -> current.equals(username)).findFirst();
-        if (found.isPresent()){
-            user = new User();
-            user.setUsername(username);
-            return new ResponseEntity<Object>(user, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @Autowired
+    UserDAO userDAO;
+    @Autowired
+    LogService logSrv;
+
+    @GetMapping(value = "/users/getActive")
+    public ResponseEntity<Object> fetchActiveUsers(){
+        try {
+            List<User> users = userDAO.findByEnabledTrue();
+            users.forEach(user->user.setPassword(null));
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }catch (Exception e){
+            logSrv.logError(e);
+            String errMsg = DAOErrorProcess.getErrorMessage(e);
+            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

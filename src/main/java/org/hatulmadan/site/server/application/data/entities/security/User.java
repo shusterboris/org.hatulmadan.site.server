@@ -111,13 +111,10 @@ public class User implements UserDetails, Serializable {
         this.authorities = authorities;
     }
     
-
-
-    @OneToMany
-    @JoinTable(name = "USER_GROUP_LINK",
-            joinColumns = @JoinColumn(name = "USER_GID", referencedColumnName = "ID",  foreignKey = @ForeignKey(name = "bothIds")),
-            inverseJoinColumns = @JoinColumn(name = "GROUP_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "bothIds")))
-    @ElementCollection(targetClass=Group.class)
+    @ManyToMany
+    @JoinTable(name = "USERGROUPS_USERS",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
     private List<Group> groups = new ArrayList<Group>();
 
 	public List<Group> getGroups() {
