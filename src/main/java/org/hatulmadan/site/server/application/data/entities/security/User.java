@@ -125,4 +125,5 @@ public class User implements UserDetails, Serializable {
 		this.groups = groups;
 	}
 
+	public Long getId(){return id;}
 }

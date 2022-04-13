@@ -2,9 +2,11 @@ package org.hatulmadan.site.server.application.controllers;
 
 import org.hatulmadan.site.server.application.data.entities.courses.Course;
 import org.hatulmadan.site.server.application.data.entities.courses.Group;
+import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.data.proxies.GroupProxy;
 import org.hatulmadan.site.server.application.data.repositories.CoursesDAO;
 import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
+import org.hatulmadan.site.server.application.data.repositories.UserDAO;
 import org.hatulmadan.site.server.application.services.LogService;
 import org.hatulmadan.site.server.application.utils.DAOErrorProcess;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class DictController {
@@ -25,6 +28,9 @@ public class DictController {
 
     @Autowired
     LogService logSrv;
+
+    @Autowired
+    UserDAO userDAO;
 
     @GetMapping(value = "/dictionary/group/getAll")
     public ResponseEntity<Object> fetchGroupsAll(){
@@ -75,6 +81,51 @@ public class DictController {
         }
     }
 
+    @PutMapping(value = "/dictionary/group/addUser/{userId}/{groupId}")
+    public ResponseEntity<Object> addUserToGroup(@PathVariable Long userId, @PathVariable Long groupId){
+        try{
+            Optional<User> userOpt = userDAO.findById(userId);
+            if (!userOpt.isPresent())
+                return new ResponseEntity<>("Не найден пользователь", HttpStatus.NOT_FOUND);
+            Optional<Group> groupOpt = groupsDAO.findById(groupId);
+            if (!groupOpt.isPresent())
+                return new ResponseEntity<>("Не найдена группа", HttpStatus.NOT_FOUND);
+            User user = userOpt.get();
+            //группа есть в списке групп пользователя, т.е. фактически ее добавлять не нужно, но это и не ошибка, есть, так есть
+            Optional<Group> found = user.getGroups().stream().filter(group -> group.getId().equals(groupId)).findAny();
+            if (found.isPresent())
+                return new ResponseEntity<>(user.getGroups(),HttpStatus.OK);
+            List<Group> groups = user.getGroups();
+            groups.add(groupOpt.get());
+            user.setGroups(groups);
+            userDAO.save(user);
+            List<User> newUserList = groupsDAO.findById(groupId).get().getUsers();
+            return new ResponseEntity<>(newUserList, HttpStatus.OK);
+        }catch (Exception e){
+            return DAOErrorProcess.processError(e, logSrv, null);
+        }
+    }
+
+    @PutMapping(value = "/dictionary/group/excludeUser/{userId}/{groupId}")
+    public ResponseEntity<Object> excludeUserFromGroup(@PathVariable Long userId, @PathVariable Long groupId){
+        try{
+            Optional<User> userOpt = userDAO.findById(userId);
+            if (!userOpt.isPresent())
+                return new ResponseEntity<>("Не найден пользователь", HttpStatus.NOT_FOUND);
+            Optional<Group> groupOpt = groupsDAO.findById(groupId);
+            if (!groupOpt.isPresent())
+                return new ResponseEntity<>("Не найдена группа", HttpStatus.NOT_FOUND);
+            User user = userOpt.get();
+            //оставляем у пользователя только те группы, id которых не равен удаляемому
+            List<Group> groups = user.getGroups().stream().filter(usr -> !usr.getId().equals(groupId)).collect(Collectors.toList());
+            user.setGroups(groups);
+            userDAO.save(user);
+            List<User> newUserList = groupsDAO.findById(groupId).get().getUsers();
+            return new ResponseEntity<>(newUserList, HttpStatus.OK);
+        }catch (Exception e){
+            return DAOErrorProcess.processError(e, logSrv, null);
+        }
+    }
     // ********************************************************************************
     // **************************** END GROUP ************************************
 

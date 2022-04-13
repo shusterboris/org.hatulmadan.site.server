@@ -23,11 +23,11 @@ public class LessonProxy {
     public Lesson updateEntity(){
         Lesson l =  new Lesson();
         l.setId(id);
-        l.setGroupId(group.getId());
+        l.setGroupId(group!=null ? group.getId() : null);
         l.setStart(this.getStart());
         l.setComment(comment);
         l.setSortOrder(sortOrder);
-        l.setGroupName(group.getName());
+        l.setGroupName(group!=null ? group.getName() : "");
         return l;
     }
 

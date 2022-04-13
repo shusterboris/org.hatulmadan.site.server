@@ -37,17 +37,17 @@ public class LessonsController {
     @GetMapping(value = "lesson/getAll")
     public ResponseEntity<Object> fetchLessons(){
         try{
-            List<LessonProxy> res = service.findLessonsData(null);
+            List<LessonProxy> res = service.findLessonsData(null, true);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping(value = "lesson/getByGroupId/{groupId}")
-    public ResponseEntity<Object> fetchLessonsByGroup(@PathVariable Long groupId){
+    @GetMapping(value = {"lesson/getByGroupId/{groupId}", "lesson/getByGroupId"} )
+    public ResponseEntity<Object> fetchLessonsByGroup(@PathVariable(required = false) Long groupId){
         try{
-            List<LessonProxy> res = service.findLessonsData(groupId);
+            List<LessonProxy> res = service.findLessonsData(groupId, false);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class GroupProxy {
+    private Long id;
     private String name;
     private String schedule;
     private long course;
@@ -20,6 +21,7 @@ public class GroupProxy {
     private List<User> users = new ArrayList<>();
 
     public GroupProxy(Group entity){
+        id = entity.getId();
         name = entity.getName();
         schedule = entity.getSchedule();
         course = entity.getCourse();

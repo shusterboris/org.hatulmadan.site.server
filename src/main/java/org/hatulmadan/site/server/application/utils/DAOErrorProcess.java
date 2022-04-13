@@ -1,5 +1,9 @@
 package org.hatulmadan.site.server.application.utils;
 
+import org.hatulmadan.site.server.application.services.LogService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 public class DAOErrorProcess{
     public static String getErrorMessage(Exception e){
         String errMsg = "";
@@ -18,5 +22,14 @@ public class DAOErrorProcess{
             errMsg = "Непредвиденная ошибка при работе с базой данных. Обратитесь в техническую поддержку";
         }
         return errMsg;
+    }
+
+    public static ResponseEntity<Object> processError(Exception e, LogService lSrv, HttpStatus status){
+        lSrv.logError(e);
+        String msg = getErrorMessage(e);
+        if (status == null){
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(msg, status);
     }
 }
