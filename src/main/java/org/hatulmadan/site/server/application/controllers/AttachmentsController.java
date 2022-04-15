@@ -26,6 +26,4 @@ public class AttachmentsController {
         } else
             return new ResponseEntity<String>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
 }

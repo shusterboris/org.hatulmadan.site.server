@@ -38,9 +38,7 @@ public class DictController {
             List<Group> result = groupsDAO.findAll();
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
 
@@ -54,9 +52,7 @@ public class DictController {
             }else
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
 
@@ -75,9 +71,7 @@ public class DictController {
                 groupsDAO.save(group);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -135,9 +129,7 @@ public class DictController {
             List<Course> result = coursesDAO.findByIsDeletedFalseOrderBySortOrder();
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
 
@@ -150,9 +142,7 @@ public class DictController {
             coursesDAO.delete(courseOpt.get());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
 
@@ -172,9 +162,7 @@ public class DictController {
                 coursesDAO.save(course);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
 }

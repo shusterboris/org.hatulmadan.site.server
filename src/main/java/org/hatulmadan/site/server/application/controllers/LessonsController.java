@@ -1,5 +1,6 @@
 package org.hatulmadan.site.server.application.controllers;
 
+import org.hatulmadan.site.server.application.AppConfig;
 import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
 import org.hatulmadan.site.server.application.data.entities.courses.Materials;
 import org.hatulmadan.site.server.application.data.proxies.LessonProxy;
@@ -98,6 +99,7 @@ public class LessonsController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(fileBody);
         }catch (Exception e){
+            AppConfig.log.error(e.getMessage());
             e.printStackTrace();
             if (e.getClass().getSimpleName().endsWith("IOException"))
                 return new ResponseEntity<>("errMsg_fileNotFound", HttpStatus.NOT_FOUND);

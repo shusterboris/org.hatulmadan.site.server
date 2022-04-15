@@ -31,9 +31,7 @@ public class UserController {
             users.forEach(user->user.setPassword(null));
             return new ResponseEntity<>(users, HttpStatus.OK);
         }catch (Exception e){
-            logSrv.logError(e);
-            String errMsg = DAOErrorProcess.getErrorMessage(e);
-            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
 }

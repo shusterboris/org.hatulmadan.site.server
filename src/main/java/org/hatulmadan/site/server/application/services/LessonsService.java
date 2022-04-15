@@ -31,10 +31,6 @@ public class LessonsService {
             lessons = dao.findByIsDeletedFalse();
         else {
             lessons = dao.findByGroup(groupId);
-//            if (groupId == null)
-//                lessons = dao.findByIsDeletedFalse();
-//            else
-//                lessons = dao.findByGroupIdAndIsDeletedFalseOrderByStart(groupId);
         }
         for (Lesson lesson : lessons){
             LessonProxy proxy = new LessonProxy(lesson);
