@@ -1,14 +1,10 @@
 package org.hatulmadan.site.server.application;
 
-import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.data.repositories.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.List;
 
 @SpringBootApplication
 public class Starter implements CommandLineRunner {
@@ -17,6 +13,7 @@ public class Starter implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(Starter.class, args);
+        AppConfig.log.info("Успешно запущен");
     }
 
     @Override

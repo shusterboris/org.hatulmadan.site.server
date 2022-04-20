@@ -34,6 +34,7 @@ public class AttachmentsService {
             String[] fileNameParts = fileData.getFileName().split("\\.");
             String fileExt = fileNameParts.length>1 ? fileNameParts[fileNameParts.length-1] : "";
             fileName = UUID.randomUUID().toString().concat(".").concat(fileExt);
+            AppConfig.log.error(attStoragePath);
             fullName = attStoragePath.concat(fileName);
             if (encodedFile[0].contains("image")) {
                 File imgFile = new File(fullName);
@@ -47,6 +48,7 @@ public class AttachmentsService {
             return fileName;
         } catch (Exception e) {
             e.printStackTrace();
+            AppConfig.log.error(e.getMessage());
             System.out.println("Не могу записать файл " + fullName);
             return "Ошибка: невозможно сохранить отправленный файл";
         }
@@ -66,6 +68,7 @@ public class AttachmentsService {
                 directory.mkdir();
             }
         } catch (Exception e) {
+            AppConfig.log.error(e.getMessage());
             e.printStackTrace();
         }
     }

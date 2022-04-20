@@ -43,5 +43,4 @@ public class SurveysController {
         SurveyQuestionProxy question = service.fetchSurveyQuestionById(id);
         return new ResponseEntity<>(question, HttpStatus.OK);
     }
-
 }

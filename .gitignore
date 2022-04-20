@@ -1,2 +1,7 @@
 /start_server.cmd
 /src/main/resources/application-prod.yaml
+/target/
+/target/**
+/bin/
+/bin/**
+/.idea/

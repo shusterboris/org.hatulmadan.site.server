@@ -1,5 +1,6 @@
 package org.hatulmadan.site.server.application.controllers;
 
+import org.hatulmadan.site.server.application.AppConfig;
 import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
 import org.hatulmadan.site.server.application.data.entities.courses.Materials;
 import org.hatulmadan.site.server.application.data.proxies.LessonProxy;
@@ -37,17 +38,17 @@ public class LessonsController {
     @GetMapping(value = "lesson/getAll")
     public ResponseEntity<Object> fetchLessons(){
         try{
-            List<LessonProxy> res = service.findLessonsData(null);
+            List<LessonProxy> res = service.findLessonsData(null, true);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping(value = "lesson/getByGroupId/{groupId}")
-    public ResponseEntity<Object> fetchLessonsByGroup(@PathVariable Long groupId){
+    @GetMapping(value = {"lesson/getByGroupId/{groupId}", "lesson/getByGroupId"} )
+    public ResponseEntity<Object> fetchLessonsByGroup(@PathVariable(required = false) Long groupId){
         try{
-            List<LessonProxy> res = service.findLessonsData(groupId);
+            List<LessonProxy> res = service.findLessonsData(groupId, false);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -98,6 +99,7 @@ public class LessonsController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(fileBody);
         }catch (Exception e){
+            AppConfig.log.error(e.getMessage());
             e.printStackTrace();
             if (e.getClass().getSimpleName().endsWith("IOException"))
                 return new ResponseEntity<>("errMsg_fileNotFound", HttpStatus.NOT_FOUND);

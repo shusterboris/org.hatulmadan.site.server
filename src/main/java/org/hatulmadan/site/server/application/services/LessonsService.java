@@ -10,8 +10,6 @@ import org.hatulmadan.site.server.application.data.repositories.MaterialsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -25,14 +23,15 @@ public class LessonsService {
     @Autowired
     GroupsDAO groupsDAO;
 
-    public List<LessonProxy> findLessonsData(Long groupId){
+    public List<LessonProxy> findLessonsData(Long groupId, boolean showAll){
         HashSet<Group> groupList = groupsDAO.findByIsDeletedFalse();
         List<LessonProxy> result = new ArrayList<>();
         List<Lesson> lessons;
-        if (groupId == null)
+        if (showAll)
             lessons = dao.findByIsDeletedFalse();
-        else
-            lessons = dao.findByGroupIdAndIsDeletedFalseOrderByStart(groupId);
+        else {
+            lessons = dao.findByGroup(groupId);
+        }
         for (Lesson lesson : lessons){
             LessonProxy proxy = new LessonProxy(lesson);
             Optional<Group> curGroup = groupList.stream().filter(group -> group.getId().equals(lesson.getGroupId())).findFirst();

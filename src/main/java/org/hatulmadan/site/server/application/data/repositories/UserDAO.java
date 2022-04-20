@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface UserDAO extends CrudRepository<User, Long> {
     User findByUsername(String username);
-    //List<User> findByGroup(Long groupId);
+    List<User> findByEnabledTrue();
 }
