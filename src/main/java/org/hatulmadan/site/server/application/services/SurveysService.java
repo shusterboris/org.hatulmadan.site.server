@@ -1,8 +1,11 @@
 package org.hatulmadan.site.server.application.services;
 
+import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
+import org.hatulmadan.site.server.application.data.entities.courses.Materials;
 import org.hatulmadan.site.server.application.data.entities.survey.Quiz;
 import org.hatulmadan.site.server.application.data.entities.survey.QuizAnswer;
 import org.hatulmadan.site.server.application.data.entities.survey.QuizQuestion;
+import org.hatulmadan.site.server.application.data.proxies.LessonProxy;
 import org.hatulmadan.site.server.application.data.proxies.SurveyProxy;
 import org.hatulmadan.site.server.application.data.proxies.SurveyQuestionProxy;
 import org.hatulmadan.site.server.application.data.repositories.AnswersDAO;
@@ -46,5 +49,10 @@ public class SurveysService {
         SurveyQuestionProxy proxy = new SurveyQuestionProxy(question);
         proxy.setAnswers(answers);
         return proxy;
+    }
+    public Long saveSurvey(SurveyProxy proxy) throws Exception{
+        Quiz entity = proxy.updateEntity();
+        Quiz result = surveyDAO.save(entity);
+        return result.getId();
     }
 }

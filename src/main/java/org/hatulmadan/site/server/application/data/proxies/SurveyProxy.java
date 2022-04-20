@@ -19,6 +19,7 @@ public class SurveyProxy implements Serializable {
     List<Long> questionIds;
     LocalDateTime startedAt = LocalDateTime.now();
     Integer curPos = 0;
+    boolean isDeleted=false;
 
     public SurveyProxy() {
     }
@@ -28,5 +29,12 @@ public class SurveyProxy implements Serializable {
         sortOrder = quiz.getSortOrder();
         name = quiz.getName();
     }
-
+    public Quiz updateEntity() {
+    	Quiz q=new Quiz();
+    	q.setDeleted(isDeleted);
+    	if (id !=null )q.setId(id);
+    	q.setName(name);
+    	q.setSortOrder(sortOrder);
+    	return q;
+    }
 }
