@@ -18,6 +18,8 @@ public class DAOErrorProcess{
             errMsg = "Ошибка при работе с базой данных. Попробуйте еще раз";
         }else if (errClass.equals("DataAccessException")){
             errMsg = "Ошибка при работе с базой данных. Обратитесь в техническую поддержку";
+        }else if (errClass.equals("DataIntegrityViolationException")){
+            errMsg = "Попытка сохранить некорректные данные (нарушены ограничения базы данных)";
         }else{
             errMsg = "Непредвиденная ошибка при работе с базой данных. Обратитесь в техническую поддержку";
         }

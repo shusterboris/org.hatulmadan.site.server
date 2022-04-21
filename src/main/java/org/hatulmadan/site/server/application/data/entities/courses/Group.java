@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @Table(name = "usergroups")
 public class Group extends BasicEntity implements Serializable {
-    @Column(name = "groupName")
+    @Column(name = "groupName", unique = true)
     private String name;
     private String schedule;
     private long course;

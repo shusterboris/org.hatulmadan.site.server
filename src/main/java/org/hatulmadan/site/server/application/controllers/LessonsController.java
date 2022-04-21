@@ -80,6 +80,22 @@ public class LessonsController {
         }
     }
 
+    @DeleteMapping(value = "lesson/materials/delete/{id}")
+    public ResponseEntity<Object> removeLessonsMaterials(@PathVariable Long id) {
+        try{
+            Optional<Materials> found = service.getmDAO().findById(id);
+            if (!found.isPresent()){
+                return new ResponseEntity<>("Материал с указанным идентификатором не найден", HttpStatus.NOT_FOUND);
+            }
+            Long lessonId = found.get().getLesson();
+            service.getmDAO().deleteById(id);
+            List<Materials> updatedList = service.getmDAO().findByLesson(lessonId);
+            return new ResponseEntity<>(updatedList, HttpStatus.OK);
+        }catch (Exception e){
+            String errMsg = DAOErrorProcess.getErrorMessage(e);
+            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping(value = "lesson/materials/getByLessonId/{lessonId}")
     public ResponseEntity<Object> fetchLessonsMaterials(@PathVariable Long lessonId) {

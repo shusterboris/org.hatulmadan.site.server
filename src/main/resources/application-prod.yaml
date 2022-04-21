@@ -15,7 +15,7 @@ spring:
   secret: $2y$04$mygZYT6qZ72/FSXpcvZ6tuzkJ1rF5Sd4rNtxJ13QT965CC24o6jYO
 logging:
   file:
-    name: log/hatulmadan.log
+    name: logs/hatulmadan.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger : %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger : %msg%n"

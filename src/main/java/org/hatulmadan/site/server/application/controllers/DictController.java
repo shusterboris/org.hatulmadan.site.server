@@ -71,7 +71,11 @@ public class DictController {
                 groupsDAO.save(group);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
-            return DAOErrorProcess.processError(e, logSrv, HttpStatus.INTERNAL_SERVER_ERROR);
+            String errClass = e.getClass().getCanonicalName();
+            if (!errClass.contains("DataIntegrityViolationException"))
+                return DAOErrorProcess.processError(e, logSrv, HttpStatus.INTERNAL_SERVER_ERROR);
+            else
+                return new ResponseEntity<>("Название группы должно быть уникальным!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
