@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -114,13 +116,18 @@ public class LessonsController {
             byte[] fileBody = attServie.readImage(fileName);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(fileBody);
+        }catch (NoSuchFileException nsfe) {
+            String errMsg = "Нет запрошенного вложенного файла на диске!";
+            AppConfig.log.error(errMsg);
+            return new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
+        }catch (IOException ioe){
+            String errMsg = "Ошибка при чтении файла!";
+            AppConfig.log.error(errMsg);
+            return new ResponseEntity<>(errMsg, HttpStatus.NO_CONTENT);
         }catch (Exception e){
             AppConfig.log.error(e.getMessage());
             e.printStackTrace();
-            if (e.getClass().getSimpleName().endsWith("IOException"))
-                return new ResponseEntity<>("errMsg_fileNotFound", HttpStatus.NOT_FOUND);
-            else
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

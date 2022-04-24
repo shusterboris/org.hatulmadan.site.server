@@ -166,7 +166,11 @@ public class DictController {
                 coursesDAO.save(course);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
-            return DAOErrorProcess.processError(e, logSrv, null);
+            String errClass = e.getClass().getCanonicalName();
+            if (!errClass.contains("DataIntegrityViolationException"))
+                return DAOErrorProcess.processError(e, logSrv, null);
+            else
+                return new ResponseEntity<>("Курс с таким названием уже существует. Дубликаты запрещены", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

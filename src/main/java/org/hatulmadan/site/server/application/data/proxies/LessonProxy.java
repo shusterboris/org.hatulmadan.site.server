@@ -20,8 +20,9 @@ public class LessonProxy {
     List<Materials> materials;
     Long sortOrder = 0L;
 
-    public Lesson updateEntity(){
-        Lesson l =  new Lesson();
+    public Lesson updateEntity(Lesson l){
+        if (l == null || l.getId() == null)
+            l =  new Lesson();
         l.setId(id);
         l.setGroupId(group!=null ? group.getId() : null);
         l.setStart(this.getStart());

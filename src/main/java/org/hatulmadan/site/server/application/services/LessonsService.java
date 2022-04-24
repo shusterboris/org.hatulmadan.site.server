@@ -49,7 +49,13 @@ public class LessonsService {
     }
 
     public Long saveLesson(LessonProxy proxy) throws Exception{
-        Lesson entity = proxy.updateEntity();
+        Optional<Lesson> existing = null;
+        Lesson entity = null;
+        if (proxy.getId() != null) {
+            existing = dao.findById(proxy.getId());
+            entity = proxy.updateEntity(existing.orElse(null));
+        }else
+            entity = proxy.updateEntity(null);
         Lesson result = dao.save(entity);
         proxy.getMaterials().stream()
                 .filter(m->m.getId()==null)
