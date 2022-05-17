@@ -28,7 +28,7 @@ public class LessonsService {
         List<LessonProxy> result = new ArrayList<>();
         List<Lesson> lessons;
         if (showAll)
-            lessons = dao.findByIsDeletedFalse();
+            lessons = dao.findByIsDeletedFalseOrderByStartDesc();
         else {
             lessons = dao.findByGroup(groupId);
         }
