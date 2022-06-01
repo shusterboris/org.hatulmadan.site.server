@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Starter implements CommandLineRunner {
+public class Starter  {
     @Autowired
     UserDAO userDAO;
 
@@ -16,17 +16,4 @@ public class Starter implements CommandLineRunner {
         AppConfig.log.info("Успешно запущен");
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        /*
-		User userAdmin = new User();
-		System.out.println("Ищем");
-        userAdmin.setUsername("super");
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        userAdmin.setPassword(encoder.encode("meow!"));
-        System.out.println("Пишем");
-        userDAO.save(userAdmin);
-        System.out.println("Готово");
-         */
-    }
 }
