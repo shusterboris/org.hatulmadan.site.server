@@ -68,5 +68,9 @@ public class LessonsService {
     }
 
     public MaterialsDAO getmDAO() {return mDAO; }
+    
+    public GroupsDAO getGDAO() {
+    	return groupsDAO;
+    };
 
 }

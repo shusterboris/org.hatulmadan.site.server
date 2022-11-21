@@ -130,4 +130,28 @@ public class LessonsController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PutMapping(value = "lesson/copy")
+    public ResponseEntity<Object> copyLesson( @RequestBody LessonProxy lesson) {
+        try{
+        	List<Materials> materialsList = service.getmDAO().findByLesson(lesson.getId());
+            lesson.setId(null);
+            Long nl=service.saveLesson(lesson);
+          for (Materials x : materialsList) {
+        	  Materials c=new Materials();
+        	  c.setLesson(nl);
+        	  c.setComment(x.getComment());
+        	  c.setFileLink(x.getFileLink());
+        	  c.setSrvFileLink(x.getSrvFileLink());
+        	  c.setYoutubeLink(x.getYoutubeLink());
+        	  
+        	  service.getmDAO().save(c);
+          }
+        
+            return new ResponseEntity<>(nl, HttpStatus.OK);
+        }catch (Exception e){
+            String errMsg = DAOErrorProcess.getErrorMessage(e);
+            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
