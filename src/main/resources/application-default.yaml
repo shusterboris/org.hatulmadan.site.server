@@ -29,4 +29,6 @@ logging:
 server:
   port: 8080
 
-
+file:
+  size: 5242880
+  folder: attstorage

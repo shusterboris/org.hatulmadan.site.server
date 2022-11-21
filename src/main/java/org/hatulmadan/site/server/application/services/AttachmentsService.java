@@ -18,15 +18,16 @@ import java.util.UUID;
 
 @Service
 public class AttachmentsService {
-    public long maxAttSize = 1024 * 1024 * 5;
+    @Value("#{new Integer('${file.size}')}")
+    public Integer maxAttSize = 5;
     String attStoragePath = AppConfig.getAppFolder().concat("attstorage").concat(AppConfig.fileSeparator);
 
 
     public String writeFile(UploadedFileProxy fileData) {
         String fileName = "";
         String fullName = "";
-        if (fileData.getBlob().length() > maxAttSize) {
-            return "Ошибка: слишком большой файл, размер не должен быть более " + String.valueOf(Math.ceil(maxAttSize/1024/1024)) +  " Мб";
+        if (fileData.getBlob().length() > (maxAttSize * 1024 * 1024)) {
+            return "Ошибка: слишком большой файл, размер не должен быть более " + String.valueOf(Math.ceil(maxAttSize)) +  " Мб";
         }
         String[] encodedFile = fileData.getBlob().split(",");
         byte[] data = Base64.getMimeDecoder().decode(encodedFile[1]);
