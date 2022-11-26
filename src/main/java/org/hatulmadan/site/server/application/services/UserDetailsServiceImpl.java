@@ -1,10 +1,14 @@
 package org.hatulmadan.site.server.application.services;
 
 import org.hatulmadan.site.server.application.data.proxies.UserProxy;
+import org.hatulmadan.site.server.application.AppConfig;
+import org.hatulmadan.site.server.application.data.entities.courses.Group;
 import org.hatulmadan.site.server.application.data.entities.security.Authority;
 import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.data.repositories.AuthorityDAO;
+import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
 import org.hatulmadan.site.server.application.data.repositories.UserDAO;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.json.simple.JSONObject;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -27,7 +34,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     AuthorityDAO aDAO;
-
+    
+   	 private static final Base64.Decoder decoder = Base64.getDecoder();
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -85,5 +93,33 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             user.setPassword(userPasswordEncoder.encode(user.getPassword()));
         return userDAO.save(user);
     }
+    public static String decodeUser(String authToken) {
+    	if (authToken == null) return "server";
+    	String[] tokens = authToken.split(" ");
+    	String token = authToken;
+    	if (tokens.length == 2)
+    		token = tokens[1];
+    	String[] chunks = token.split("\\.");
 
+    	String payload = new String(decoder.decode(chunks[1].replace('-', '+').replace('_', '/')));
+    	JSONObject info = AppConfig.gson.fromJson(payload, JSONObject.class);
+    	return (String) info.get("sub");
+   
+    }
+    
+    public List<Group> fetchUsersGroups(String userName) {
+       //String userName = decodeUser(token);
+       User user=userDAO.findByUsername(userName);
+    
+        return user.getGroups();
+    }
+    public boolean isSuper(String userName) {
+    	
+    	User user=userDAO.findByUsername(userName);   
+    	Collection<Authority> authorities = user.getAuthorities();
+    	for (Authority a: authorities) {
+    		if (a.getName().equalsIgnoreCase("super")) return true;
+    	}
+    	return false;
+    }
 }

@@ -38,9 +38,9 @@ public class LessonsController {
     }
 
     @GetMapping(value = "lesson/getAll")
-    public ResponseEntity<Object> fetchLessons(){
+    public ResponseEntity<Object> fetchLessons(@RequestHeader(name = "Authorization") String token){
         try{
-            List<LessonProxy> res = service.findLessonsData(null, true);
+            List<LessonProxy> res = service.findLessonsData(null, true,token);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -48,9 +48,9 @@ public class LessonsController {
     }
 
     @GetMapping(value = {"lesson/getByGroupId/{groupId}", "lesson/getByGroupId"} )
-    public ResponseEntity<Object> fetchLessonsByGroup(@PathVariable(required = false) Long groupId){
+    public ResponseEntity<Object> fetchLessonsByGroup(@PathVariable(required = false) Long groupId,@RequestHeader(name = "Authorization") String token){
         try{
-            List<LessonProxy> res = service.findLessonsData(groupId, false);
+            List<LessonProxy> res = service.findLessonsData(groupId, false, token);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -22,13 +22,26 @@ public class LessonsService {
 
     @Autowired
     GroupsDAO groupsDAO;
+    
+    @Autowired
+    UserDetailsServiceImpl userDetail;
 
-    public List<LessonProxy> findLessonsData(Long groupId, boolean showAll){
-        HashSet<Group> groupList = groupsDAO.findByIsDeletedFalse();
+    public List<LessonProxy> findLessonsData(Long groupId, boolean showAll, String token){
         List<LessonProxy> result = new ArrayList<>();
         List<Lesson> lessons;
+        String username=userDetail.decodeUser(token);
+        List<Group> usersGr = userDetail.fetchUsersGroups(username);
+        boolean supervisor=userDetail.isSuper(username);
+        HashSet<Group> groupList = new HashSet<>();
+        		//all 
+        if (!supervisor) {
+        	//for(Group g:usersGr)
+        	   groupList.addAll(usersGr);
+        } else 
+        	groupList=groupsDAO.findByIsDeletedFalse();
         if (showAll)
             lessons = dao.findByIsDeletedFalseOrderByStartDesc();
+ 
         else {
             lessons = dao.findByGroup(groupId);
         }
@@ -36,6 +49,7 @@ public class LessonsService {
             LessonProxy proxy = new LessonProxy(lesson);
             Optional<Group> curGroup = groupList.stream().filter(group -> group.getId().equals(lesson.getGroupId())).findFirst();
             proxy.setGroup(curGroup.orElse(null));
+            // добавить проверку есть ли у юзера эта группа
             List<Materials> materials = mDAO.findByLesson(lesson.getId());
             proxy.setMaterials(materials);
             result.add(proxy);
