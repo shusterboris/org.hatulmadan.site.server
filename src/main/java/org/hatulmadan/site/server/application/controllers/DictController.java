@@ -1,12 +1,16 @@
 package org.hatulmadan.site.server.application.controllers;
 
+import org.hatulmadan.site.server.application.data.entities.Article;
 import org.hatulmadan.site.server.application.data.entities.courses.Course;
 import org.hatulmadan.site.server.application.data.entities.courses.Group;
 import org.hatulmadan.site.server.application.data.entities.security.User;
+import org.hatulmadan.site.server.application.data.proxies.ArticleProxy;
 import org.hatulmadan.site.server.application.data.proxies.GroupProxy;
+import org.hatulmadan.site.server.application.data.repositories.ArticleDAO;
 import org.hatulmadan.site.server.application.data.repositories.CoursesDAO;
 import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
 import org.hatulmadan.site.server.application.data.repositories.UserDAO;
+import org.hatulmadan.site.server.application.services.AttachmentsService;
 import org.hatulmadan.site.server.application.services.LogService;
 import org.hatulmadan.site.server.application.utils.DAOErrorProcess;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,6 +36,11 @@ public class DictController {
 
     @Autowired
     UserDAO userDAO;
+    
+    @Autowired
+    ArticleDAO atDAO;
+    @Autowired
+    AttachmentsService atas;
 
     @GetMapping(value = "/dictionary/group/getAll")
     public ResponseEntity<Object> fetchGroupsAll(){
@@ -173,4 +183,58 @@ public class DictController {
                 return new ResponseEntity<>("Курс с таким названием уже существует. Дубликаты запрещены", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    //******************articles*******************
+    @PutMapping(value = "article/save")
+    public ResponseEntity<Object> saveArticle(@RequestBody ArticleProxy proxy){
+        try{
+           Article a = atDAO.save(proxy.createArticle());
+            return new ResponseEntity<>(a.getId(), HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            String errMsg = DAOErrorProcess.getErrorMessage(e);
+            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping(value = "getArticles/{full}/{kind}")
+    public ResponseEntity<Object> fetchArticles(@PathVariable boolean full, @PathVariable String kind ){
+        try {
+            List<ArticleProxy> result =new ArrayList<ArticleProxy>();
+            List<Article> at    = (List<Article>) atDAO.findAllByOrderByIdDesc();
+            for (Article a:at) {
+            	ArticleProxy apr=new ArticleProxy(a.getTitleA(),a.getTextA());
+            	apr.setId(a.getId());
+            	apr.setType(a.getType());
+            	apr.setLink(a.getLink());
+            	if (full) {
+            		if(a.getSrvFileLink()!=null)
+            			apr.setImage(atas.readImage(a.getSrvFileLink()));
+            	}
+            	result.add(apr);
+            }
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e){
+            return DAOErrorProcess.processError(e, logSrv, null);
+        }
+    }
+    @GetMapping(value = "/article/getById/{id}")
+    public ResponseEntity<Object> fetchArticleById(@PathVariable Long id){
+        try {
+            Optional<Article> a = atDAO.findById(id);
+            if (a.isPresent()) {
+            	ArticleProxy apr=new ArticleProxy(a.get().getTitleA(),a.get().getTextA());
+            	apr.setId(a.get().getId());
+            	apr.setType(a.get().getType());
+            	apr.setLink(a.get().getLink());
+            	if(a.get().getSrvFileLink()!=null)
+            			apr.setImage(atas.readImage(a.get().getSrvFileLink()));
+            	
+                return new ResponseEntity<>(apr, HttpStatus.OK);
+            }else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return DAOErrorProcess.processError(e, logSrv, null);
+        }
+    }
+ 
 }

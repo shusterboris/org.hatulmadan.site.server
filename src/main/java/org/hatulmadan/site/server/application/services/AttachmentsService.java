@@ -27,7 +27,7 @@ public class AttachmentsService {
         String fileName = "";
         String fullName = "";
         if (fileData.getBlob().length() > (maxAttSize * 1024 * 1024)) {
-            return "Ошибка: слишком большой файл, размер не должен быть более " + String.valueOf(Math.ceil(maxAttSize)) +  " Мб";
+        	return "Ошибка: слишком большой файл, размер не должен быть более " + String.valueOf(Math.ceil(maxAttSize)) +  " Мб";
         }
         String[] encodedFile = fileData.getBlob().split(",");
         byte[] data = Base64.getMimeDecoder().decode(encodedFile[1]);

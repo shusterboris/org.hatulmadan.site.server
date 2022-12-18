@@ -3,6 +3,7 @@ package org.hatulmadan.site.server.application.controllers;
 import org.hatulmadan.site.server.application.AppConfig;
 import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
 import org.hatulmadan.site.server.application.data.entities.courses.Materials;
+import org.hatulmadan.site.server.application.data.proxies.ArticleProxy;
 import org.hatulmadan.site.server.application.data.proxies.LessonProxy;
 import org.hatulmadan.site.server.application.services.AttachmentsService;
 import org.hatulmadan.site.server.application.services.LessonsService;
@@ -153,5 +154,5 @@ public class LessonsController {
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+   
 }
