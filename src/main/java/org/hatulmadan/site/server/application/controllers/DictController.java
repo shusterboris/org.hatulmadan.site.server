@@ -188,7 +188,18 @@ public class DictController {
     @PutMapping(value = "article/save")
     public ResponseEntity<Object> saveArticle(@RequestBody ArticleProxy proxy){
         try{
-           Article a = atDAO.save(proxy.createArticle());
+        	Article a=null;
+        	if (proxy.getId()==null) {
+        	   a = atDAO.save(proxy.createArticle());
+        	} else {
+        		a=atDAO.findById(proxy.getId()).get();
+        		a.setLink(proxy.getLink());
+        		a.setSrvFileLink(proxy.getSrvFileLink());
+        		a.setTextA(proxy.getTextA());
+        		a.setTitleA(proxy.getTitleA());
+        		a.setType(proxy.getType());
+        		 a = atDAO.save(a);
+        	}
             return new ResponseEntity<>(a.getId(), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
@@ -226,9 +237,10 @@ public class DictController {
             	apr.setId(a.get().getId());
             	apr.setType(a.get().getType());
             	apr.setLink(a.get().getLink());
-            	if(a.get().getSrvFileLink()!=null)
+            	if(a.get().getSrvFileLink()!=null) {
             			apr.setImage(atas.readImage(a.get().getSrvFileLink()));
-            	
+            			apr.setSrvFileLink(a.get().getSrvFileLink());
+            	}
                 return new ResponseEntity<>(apr, HttpStatus.OK);
             }else
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);

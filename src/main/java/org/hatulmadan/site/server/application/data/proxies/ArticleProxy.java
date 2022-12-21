@@ -27,6 +27,11 @@ public class ArticleProxy {
 
 	};
 	public Article createArticle() {
-		return new Article(titleA, textA, srvFileLink);
+		Article a=	 new Article(titleA, textA, srvFileLink);
+		if (id!=null)a.setId(id);
+		if (link!=null) a.setLink(link);
+		if (type!=null)a.setType(type);
+		return a;
 	}
-}
+}	
+	

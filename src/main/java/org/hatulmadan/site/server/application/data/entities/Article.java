@@ -18,8 +18,10 @@ import lombok.Setter;
 public class Article extends BasicEntity implements Serializable{
 	@Column(length = 80)
 	private String titleA;
+	@Column(length = 1000)
 	private String textA;
 	private String srvFileLink;
+	@Column(length = 80)
 	private String type; //это префикс ссылок на странице
 	@Column
 	private ZonedDateTime dateA;
