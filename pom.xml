@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.hatulmadan.site</groupId>
     <artifactId>hatulmadansite.server</artifactId>
-    <version>0.5.5</version>
+    <version>0.5.8</version>
     <description>Server part of hatul madan site</description>
 
     <parent>

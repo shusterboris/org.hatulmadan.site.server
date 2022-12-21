@@ -13,6 +13,12 @@ spring:
       check_nullability: true
   jwt.get.token.uri: /auth
   secret: $2y$04$mygZYT6qZ72/FSXpcvZ6tuzkJ1rF5Sd4rNtxJ13QT965CC24o6jYO
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 10MB
+      max-request-size: 10MB
 logging:
   file:
     name: logs/hatulmadan.log
@@ -26,3 +32,6 @@ logging:
     org.hibernate.SQL: DEBUG
 server:
   port: 8318
+file:
+  size: 10
+  folder: attstorage
