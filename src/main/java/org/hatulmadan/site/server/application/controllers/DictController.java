@@ -207,11 +207,21 @@ public class DictController {
             return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "getArticles/{full}/{kind}")
-    public ResponseEntity<Object> fetchArticles(@PathVariable boolean full, @PathVariable String kind ){
+    @GetMapping(value = "getArticles/{full}/{kind}/{start}/{len}")
+    public ResponseEntity<Object> fetchArticles(@PathVariable boolean full, @PathVariable String kind,
+    		@PathVariable(value="start",required=false) int start, @PathVariable(value="len",required=false) int len
+    		){
         try {
             List<ArticleProxy> result =new ArrayList<ArticleProxy>();
-            List<Article> at    = (List<Article>) atDAO.findAllByOrderByIdDesc();
+            List<Article> at    = (List<Article>) atDAO.findAllByOrderByIdDesc();        	
+            int end=start+len;
+            if (end>0 & at.size()>start){
+            	if (end<at.size()) {
+            		at=at.subList(start, end);
+            	} else {
+            		at=at.subList(start, at.size());
+            	}
+            }
             for (Article a:at) {
             	ArticleProxy apr=new ArticleProxy(a.getTitleA(),a.getTextA());
             	apr.setId(a.getId());
@@ -248,5 +258,14 @@ public class DictController {
             return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
- 
+    @GetMapping(value = "/getArticles/count/{kind}")
+    public ResponseEntity<Object> fetchArticlesCount(@PathVariable  String kind){
+    	try {
+    	            List<ArticleProxy> result =new ArrayList<ArticleProxy>();
+    	            List<Article> at    = (List<Article>) atDAO.findAll();     
+    	            return new ResponseEntity<>(at.size(), HttpStatus.OK); 
+    	} catch (Exception e){
+              return DAOErrorProcess.processError(e, logSrv, null);
+          }
+      }	  
 }
