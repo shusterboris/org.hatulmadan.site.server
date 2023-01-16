@@ -9,10 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "USERS", uniqueConstraints = {@UniqueConstraint(columnNames = {"USERNAME"})})
 public class User implements UserDetails, Serializable {
@@ -38,8 +40,15 @@ public class User implements UserDetails, Serializable {
     @Column(name = "CREDENTIALS_EXPIRED")
     private boolean credentialsExpired = true;
 
-    @Column(name = "ENABLED", columnDefinition = "boolean default 1")
+    @Column(name = "ENABLED", columnDefinition = "boolean default 1") //его используем для отключ
     private boolean enabled = true;
+    
+    @Column(name = "fullNAME")
+    private String fullname;
+    
+    @Column(name = "phone")
+    private String phone;
+    private String note;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USERS_AUTHORITIES",
