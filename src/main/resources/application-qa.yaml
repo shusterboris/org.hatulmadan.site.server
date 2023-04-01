@@ -3,20 +3,25 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.100.102.121:3306/hatul?useSSL=false&default_authentication_plugin=mysql_native_password&useUnicode=yes&characterEncoding=UTF-8&serverTimezone=Asia/Jerusalem
+    url: jdbc:mysql://localhost:3306/hatul-qa?useSSL=false&default_authentication_plugin=mysql_native_password&useUnicode=yes&characterEncoding=UTF-8&serverTimezone=Asia/Jerusalem
     username: chserver
     password: vfnthy0tckjdJ
   jpa:
-    generate-ddl: true
     hibernate:
       ddl-auto: update
       show-sql: true
       check_nullability: true
   jwt.get.token.uri: /auth
   secret: $2y$04$mygZYT6qZ72/FSXpcvZ6tuzkJ1rF5Sd4rNtxJ13QT965CC24o6jYO
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 10MB
+      max-request-size: 10MB
 logging:
   file:
-    name: log/hatulmadan.log
+    name: logs/hatulmadan.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger : %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger : %msg%n"
@@ -24,11 +29,9 @@ logging:
     root: ERROR
     org.springframework.web: ERROR
     org.hibernate: ERROR
-    org.hibernate.SQL: DEBUG
-
+    org.hibernate.SQL: ERROR
 server:
-  port: 8080
-
+  port: 8318
 file:
-  size: 5242880
+  size: 10
   folder: attstorage
