@@ -31,7 +31,7 @@ logging:
     org.hibernate: ERROR
     org.hibernate.SQL: ERROR
 server:
-  port: 8318
+  port: 8050
 file:
   size: 10
   folder: attstorage

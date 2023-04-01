@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.hatulmadan.site</groupId>
     <artifactId>hatulmadansite.server</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <description>Server part of hatul madan site</description>
 
     <parent>
@@ -80,13 +80,16 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <release>11</release>  <!--or <release>10</release>-->
-                </configuration>
-            </plugin>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>            </plugin>
         </plugins>
     </build>
 
