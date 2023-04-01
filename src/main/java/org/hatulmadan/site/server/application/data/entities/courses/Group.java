@@ -10,6 +10,7 @@ import org.hatulmadan.site.server.application.data.entities.BasicEntity;
 import org.hatulmadan.site.server.application.data.entities.security.User;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -25,4 +26,7 @@ public class Group extends BasicEntity implements Serializable {
     @ManyToMany(mappedBy = "groups")
     @JsonIgnore
     private List<User> users;
+    private ZonedDateTime startCourceDate;//начало оплачиваемого периода
+    private ZonedDateTime endCourceDate;//конец оплачиваемого периода
+    private float price; //month
 }

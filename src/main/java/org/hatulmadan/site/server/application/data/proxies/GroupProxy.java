@@ -1,12 +1,10 @@
 package org.hatulmadan.site.server.application.data.proxies;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hatulmadan.site.server.application.data.entities.courses.Group;
 import org.hatulmadan.site.server.application.data.entities.security.User;
-
-import javax.persistence.ManyToMany;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +17,9 @@ public class GroupProxy {
     private long course;
     private String courseName;
     private List<User> users = new ArrayList<>();
-
+    private ZonedDateTime startCourceDate;//начало оплачиваемого периода
+    private ZonedDateTime endCourceDate;//конец оплачиваемого периода
+    private float price;
     public GroupProxy(Group entity){
         id = entity.getId();
         name = entity.getName();
@@ -28,4 +28,8 @@ public class GroupProxy {
         courseName = entity.getCourseName();
         users.addAll(entity.getUsers());
     }
+	public GroupProxy(Long id2, String name2) {
+		id=id2;
+		name=name2;
+	}
 }

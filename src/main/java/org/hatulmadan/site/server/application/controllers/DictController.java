@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * @author innai
+ * здесь все кроме уроков и управления пользователями
+ */
 @RestController
 public class DictController {
     @Autowired
@@ -42,16 +46,25 @@ public class DictController {
     @Autowired
     AttachmentsService atas;
 
-    @GetMapping(value = "/dictionary/group/getAll")
-    public ResponseEntity<Object> fetchGroupsAll(){
+    @GetMapping(value = "/dictionary/group/getAll/{full}")
+    public ResponseEntity<Object> fetchGroupsAll(@PathVariable boolean full){
         try {
             List<Group> result = groupsDAO.findAll();
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            if (full) {
+            	return new ResponseEntity<>(result, HttpStatus.OK);
+            }else {
+            	List<GroupProxy> shortRes=new ArrayList<GroupProxy>();
+            	for (Group g:result){
+            		shortRes.add(new GroupProxy(g.getId(),g.getName()));
+            	}
+            	return new ResponseEntity<>(shortRes, HttpStatus.OK);
+            }
+            
         } catch (Exception e){
             return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
-
+    
     @GetMapping(value = "/dictionary/group/getById/{id}")
     public ResponseEntity<Object> fetchGroupsById(@PathVariable Long id){
         try {
@@ -75,6 +88,9 @@ public class DictController {
                     Group updated = found.get();
                     updated.setName(group.getName());
                     updated.setSortOrder(group.getSortOrder());
+                    updated.setStartCourceDate(group.getStartCourceDate());
+                    updated.setEndCourceDate(group.getEndCourceDate());
+                    updated.setPrice(group.getPrice());
                     groupsDAO.save(updated);
                 }
             }else

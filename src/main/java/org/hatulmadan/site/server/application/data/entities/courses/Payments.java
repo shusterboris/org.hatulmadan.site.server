@@ -24,10 +24,5 @@ public class Payments extends BasicEntity {
 		// учебная группа
 	@Column
 	private Long groupId;
-	//занятие от которого отсчитываем начало оплаты
-	@Column
-	private ZonedDateTime startCourceDate;
-	//конец оплачиваемого периода (будем вычислять)
-	@Column
-	private ZonedDateTime lastCourceDate;
+
 }

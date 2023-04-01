@@ -5,10 +5,16 @@ import lombok.Setter;
 import lombok.val;
 
 import org.hatulmadan.site.server.application.data.entities.Article;
+import org.hatulmadan.site.server.application.data.entities.courses.Group;
+import org.hatulmadan.site.server.application.data.entities.courses.Lesson;
+import org.hatulmadan.site.server.application.data.entities.courses.Payments;
 import org.hatulmadan.site.server.application.data.entities.security.Authority;
 import org.hatulmadan.site.server.application.data.entities.security.User;
 import org.hatulmadan.site.server.application.data.proxies.ArticleProxy;
+import org.hatulmadan.site.server.application.data.proxies.PaymentProxy;
 import org.hatulmadan.site.server.application.data.proxies.UserProxy;
+import org.hatulmadan.site.server.application.data.repositories.GroupsDAO;
+import org.hatulmadan.site.server.application.data.repositories.PaymentDAO;
 import org.hatulmadan.site.server.application.data.repositories.UserDAO;
 import org.hatulmadan.site.server.application.services.LogService;
 import org.hatulmadan.site.server.application.utils.DAOErrorProcess;
@@ -30,6 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author innai
+ * управление пользователями
+ * платежи пользователей
+ */
 @RestController
 @Getter
 @Setter
@@ -38,6 +49,10 @@ public class UserController {
     UserDAO userDAO;
     @Autowired
     LogService logSrv;
+    @Autowired
+    PaymentDAO pDAO;
+    @Autowired
+    GroupsDAO gDAO;
 // не используется
     @GetMapping(value = "/users/getActive")
     public ResponseEntity<Object> fetchActiveUsers(){
@@ -129,4 +144,65 @@ public class UserController {
             return DAOErrorProcess.processError(e, logSrv, null);
         }
     }
+    //----------------------------------платежи-------------------------
+    //все платежи по юзеру
+    @GetMapping(value = "users/getInfo/{id}")
+    public ResponseEntity<Object> fetchPaymentsById(@PathVariable Long id){
+        try {
+        	//List<Payments> res = pDAO.findByUserId(id);
+        	List<PaymentProxy> res=new ArrayList<PaymentProxy>();
+        	List<Object[]> resO = pDAO.findByUserIdWithGroup(id);
+        	for (Object[] o : resO) {
+        		res.add(new PaymentProxy((Payments)o[0],(String)o[1]));
+        	}
+            return new ResponseEntity<>(res,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    //платежи по группе
+    @GetMapping(value = "users/getInfoByGroup/{id}")
+    public ResponseEntity<Object> fetchPaymentsByGroupId(@PathVariable Long id){
+        try {
+            //выбираем всех юзеров из группы и считаем платежи
+        	Optional<Group> g = gDAO.findById(id);
+        	if(!g.isPresent()) {
+        		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        	}
+        	List<String> payList=new ArrayList<String> ();
+        	List<User> l=g.get().getUsers();
+        	for (User u : l) {
+        		 int sum= pDAO.countByGroupIdAndUserId(id,u.getId());
+        		//res.forEach(pay->sum=sum+pay.getPsum());
+            	payList.add(u.getUsername()+": всего платежей "+String.valueOf(sum));
+        	}
+        	
+             return new ResponseEntity<>(payList,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    @PostMapping(value = "/users/paymentsave")
+    public ResponseEntity<Object> savePayment(@RequestBody PaymentProxy proxy){
+        try{
+        	Payments p=null;
+        	if (proxy.getUserId()==null) {
+        	   p = pDAO.save(proxy.createPayment());
+        	} else {
+        		p=pDAO.findById(proxy.getUserId()).get();
+        		p.setComment(proxy.getComment());
+        		p.setGroupId(Long.valueOf(proxy.getGroupName()));
+        		p.setPdate(proxy.getPdate());
+        		p.setPsum(proxy.getPsum());
+        		 p = pDAO.save(p);
+        	}
+            return new ResponseEntity<>(p.getId(), HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            String errMsg = DAOErrorProcess.getErrorMessage(e);
+            return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+     
 }
