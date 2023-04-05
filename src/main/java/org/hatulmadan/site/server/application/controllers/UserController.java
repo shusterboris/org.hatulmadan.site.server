@@ -186,10 +186,10 @@ public class UserController {
     public ResponseEntity<Object> savePayment(@RequestBody PaymentProxy proxy){
         try{
         	Payments p=null;
-        	if (proxy.getUserId()==null) {
+        	if (proxy.getId()==null) {
         	   p = pDAO.save(proxy.createPayment());
         	} else {
-        		p=pDAO.findById(proxy.getUserId()).get();
+        		p=pDAO.findById(proxy.getId()).get();
         		p.setComment(proxy.getComment());
         		p.setGroupId(Long.valueOf(proxy.getGroupName()));
         		p.setPdate(proxy.getPdate());

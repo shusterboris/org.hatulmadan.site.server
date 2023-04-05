@@ -207,7 +207,7 @@ public class DictController {
         	Article a=null;
         	if (proxy.getId()==null) {
         	   a = atDAO.save(proxy.createArticle());
-        	} else {
+        	} else  {
         		a=atDAO.findById(proxy.getId()).get();
         		a.setLink(proxy.getLink());
         		a.setSrvFileLink(proxy.getSrvFileLink());
