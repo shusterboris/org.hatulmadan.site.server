@@ -80,7 +80,8 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000", "http://localhost","http://127.0.0.1:8080", "https://q.hatulmadan.net" , "https://hatulmadan.net"));
+                "http://localhost:3000", "http://localhost","http://127.0.0.1:8080",
+                "https://q.hatulmadan.net" ,"https://qqa.hatulmadan.net", "https://hatulmadan.net"));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);

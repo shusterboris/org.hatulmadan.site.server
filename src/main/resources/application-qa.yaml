@@ -34,4 +34,4 @@ server:
   port: 8050
 file:
   size: 10
-  folder: attstorage
+  folder: attstorageqa
