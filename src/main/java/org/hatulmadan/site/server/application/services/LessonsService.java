@@ -10,6 +10,7 @@ import org.hatulmadan.site.server.application.data.repositories.MaterialsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.*;
 
 @Service
@@ -31,14 +32,17 @@ public class LessonsService {
         List<Lesson> lessons;
         String username=userDetail.decodeUser(token);
         List<Group> usersGr = userDetail.fetchUsersGroups(username);
+        List <Long> ids = new ArrayList<>();
         boolean supervisor=userDetail.isSuper(username);
+        //формируем список групп
         HashSet<Group> groupList = new HashSet<>();
         		//all 
         if (!supervisor) {
-        	//for(Group g:usersGr)
-        	   groupList.addAll(usersGr);
+         	   groupList.addAll(usersGr);
         } else 
         	groupList=groupsDAO.findByIsDeletedFalse();
+        groupList.forEach(group -> ids.add(group.getId()));
+        //загребаем уроки
         if (showAll)
             lessons = dao.findByIsDeletedFalseOrderByStartDesc();
  
@@ -47,12 +51,21 @@ public class LessonsService {
         }
         for (Lesson lesson : lessons){
             LessonProxy proxy = new LessonProxy(lesson);
-            Optional<Group> curGroup = groupList.stream().filter(group -> group.getId().equals(lesson.getGroupId())).findFirst();
-            proxy.setGroup(curGroup.orElse(null));
-            // добавить проверку есть ли у юзера эта группа
+            //Optional<Group> curGroup = groupList.stream().filter(group -> group.getId().equals(lesson.getGroupId())).findFirst();
+            if (lesson.getGroupId()!=null){
+            	if(!ids.contains(lesson.getGroupId())) {
+            		continue;
+            	}
+            	 Group g=new Group();
+                 g.setName(lesson.getGroupName());
+                   proxy.setGroup(g);
+            }
             List<Materials> materials = mDAO.findByLesson(lesson.getId());
             proxy.setMaterials(materials);
             result.add(proxy);
+            if ((showAll) && result.size()>20) {
+            	break; 
+            }
         }
         return result;
     }
