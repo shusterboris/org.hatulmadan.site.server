@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author innai
- * здесь все кроме уроков и управления пользователями
+ * группы и новости
  */
 @RestController
 public class DictController {

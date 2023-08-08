@@ -53,13 +53,17 @@ public class UserController {
     PaymentDAO pDAO;
     @Autowired
     GroupsDAO gDAO;
-// не используется
+    
+//  используется на странице групп  
     @GetMapping(value = "/users/getActive")
     public ResponseEntity<Object> fetchActiveUsers(){
-        try {
-            List<User> users = userDAO.findByEnabledTrue();
-            users.forEach(user->user.setPassword(null));
-            return new ResponseEntity<>(users, HttpStatus.OK);
+       	try {
+			
+			  List<User> users = userDAO.findByEnabledTrue();
+			  users.forEach(user->user.setPassword(null)); 
+			  return new ResponseEntity<>(users, HttpStatus.OK);
+			 
+        	
         }catch (Exception e){
             return DAOErrorProcess.processError(e, logSrv, null);
         }
@@ -69,10 +73,31 @@ public class UserController {
     public ResponseEntity<Object> fetchAllUsers(){
        List<UserProxy> res= new  ArrayList<UserProxy> ();
     	try {
-          Iterable<User> users = userDAO.findAll();
+          //Iterable<User> users = userDAO.findAll();
+    		Iterable<User> users = userDAO.findAllByOrderByUsername();
             users.forEach(user->
             	res.add(new UserProxy(user.getId(),user.getUsername(), user.getFullname(), user.getPhone(), user.getNote() ) ));
             return new ResponseEntity<>(res, HttpStatus.OK);
+        }catch (Exception e){
+            return DAOErrorProcess.processError(e, logSrv, null);
+        }
+    }
+    @GetMapping(value = "/users/getGroupMembers")
+    public ResponseEntity<Object> fetchGroupUsers(){
+    	  List<UserProxy> res= new  ArrayList<UserProxy> ();
+    	try {
+			/*
+			 * List<User> users = userDAO.findByEnabledTrue();
+			 * users.forEach(user->user.setPassword(null)); return new
+			 * ResponseEntity<>(users, HttpStatus.OK);
+			 */
+        	Iterable<User> users = userDAO.findAllByOrderByUsername();
+            for (User user: users) {
+            	 if (user.getGroups()!=null & !user.getGroups().isEmpty())	
+            	 res.add(new UserProxy(user.getId(),user.getUsername(), user.getFullname(), user.getPhone(), user.getNote()) );
+            }
+           
+        	return new ResponseEntity<>(res, HttpStatus.OK);
         }catch (Exception e){
             return DAOErrorProcess.processError(e, logSrv, null);
         }
@@ -204,5 +229,23 @@ public class UserController {
         }
     }
     
-     
+    @GetMapping(value = "/users/getPaymentById/{id}")
+    public ResponseEntity<Object> fetchPaymentById(@PathVariable Long id){
+        try {
+            Optional<Payments> p = pDAO.findById(id);
+            String gName="";
+            if (p.isPresent()) {
+            	Long gID=p.get().getGroupId();
+            	Optional<Group> g = gDAO.findById(gID);
+            	if (g.isPresent()){
+            		gName=g.get().getName();
+            	}
+            	PaymentProxy pp= new PaymentProxy(p.get(),gName);
+                return new ResponseEntity<>(pp, HttpStatus.OK);
+            }else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return DAOErrorProcess.processError(e, logSrv, null);
+        }
+    }  
 }
