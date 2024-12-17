@@ -27,7 +27,8 @@ public class AttachmentsService {
         String fileName = "";
         String fullName = "";
         if (fileData.getBlob().length() > (maxAttSize * 1024 * 1024)) {
-        	return "Ошибка: слишком большой файл, размер не должен быть более " + String.valueOf(Math.ceil(maxAttSize)) +  " Мб";
+        	return "Ошибка: слишком большой файл, размер не должен быть более " + String.valueOf(Math.
+                    ceil(maxAttSize)) +  " Мб";
         }
         String[] encodedFile = fileData.getBlob().split(",");
         byte[] data = Base64.getMimeDecoder().decode(encodedFile[1]);
@@ -48,9 +49,8 @@ public class AttachmentsService {
             }
             return fileName;
         } catch (Exception e) {
-            e.printStackTrace();
             AppConfig.log.error(e.getMessage());
-            System.out.println("Не могу записать файл " + fullName);
+            AppConfig.log.error("Не могу записать файл {}, due error {} ", fullName, e.getMessage());
             return "Ошибка: невозможно сохранить отправленный файл";
         }
     }
@@ -62,15 +62,17 @@ public class AttachmentsService {
 
 
 
-    private void createAttStorage() {
+    public void createAttStorage() {
         try {
             File directory = new File(attStoragePath);
             if (!directory.exists()) {
-                directory.mkdir();
+                if (!directory.mkdir())
+                    AppConfig.log.error("Не удалось создать папку для загружаеміх файлов: {}", attStoragePath);
+                else
+                    AppConfig.log.info("Папка для вложений {} создана", attStoragePath);
             }
         } catch (Exception e) {
             AppConfig.log.error(e.getMessage());
-            e.printStackTrace();
         }
     }
 
